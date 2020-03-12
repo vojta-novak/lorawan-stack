@@ -58,6 +58,9 @@ type AuthorizationCode struct {
 	User   *User
 	UserID string `gorm:"type:UUID;index;not null"`
 
+	Session   *UserSession
+	SessionID string `gorm:"type:UUID;index;not null"`
+
 	Rights Rights `gorm:"type:INT ARRAY"`
 
 	Code        string `gorm:"type:VARCHAR;unique_index:authorization_code_code_index;not null"`
@@ -70,6 +73,7 @@ func (a AuthorizationCode) toPB() *ttnpb.OAuthAuthorizationCode {
 	pb := &ttnpb.OAuthAuthorizationCode{
 		Rights:      a.Rights.Rights,
 		Code:        a.Code,
+		SessionID:   a.SessionID,
 		RedirectURI: a.RedirectURI,
 		State:       a.State,
 		CreatedAt:   cleanTime(a.CreatedAt),
@@ -94,6 +98,9 @@ type AccessToken struct {
 	User   *User
 	UserID string `gorm:"type:UUID;index;not null"`
 
+	Session   *UserSession
+	SessionID string `gorm:"type:UUID;index;not null"`
+
 	Rights Rights `gorm:"type:INT ARRAY"`
 
 	TokenID string `gorm:"type:VARCHAR;unique_index:access_token_id_index;not null"`
@@ -111,6 +118,7 @@ func (a AccessToken) toPB() *ttnpb.OAuthAccessToken {
 	pb := &ttnpb.OAuthAccessToken{
 		Rights:       a.Rights.Rights,
 		ID:           a.TokenID,
+		SessionID:    a.SessionID,
 		AccessToken:  a.AccessToken,
 		RefreshToken: a.RefreshToken,
 		CreatedAt:    cleanTime(a.CreatedAt),

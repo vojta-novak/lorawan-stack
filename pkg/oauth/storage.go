@@ -56,7 +56,8 @@ func (cli osinClient) GetUserData() interface{} { return nil }
 // userData is used as the UserData interface in osin structs.
 type userData struct {
 	ttnpb.UserIdentifiers
-	ID string
+	ID        string
+	SessionID string
 }
 
 // storage wraps IS stores, while implementing the osin.Storage interface.
@@ -84,6 +85,7 @@ func (s *storage) GetClient(id string) (osin.Client, error) {
 
 func (s *storage) SaveAuthorize(data *osin.AuthorizeData) error {
 	userIDs := data.UserData.(userData).UserIdentifiers
+	sessionID := data.UserData.(userData).SessionID
 	client := ttnpb.Client(data.Client.(osinClient))
 	rights := rightsFromScope(data.Scope)
 	_, err := s.oauth.Authorize(s.ctx, &ttnpb.OAuthClientAuthorization{
@@ -100,6 +102,7 @@ func (s *storage) SaveAuthorize(data *osin.AuthorizeData) error {
 	err = s.oauth.CreateAuthorizationCode(s.ctx, &ttnpb.OAuthAuthorizationCode{
 		ClientIDs:   client.ClientIdentifiers,
 		UserIDs:     userIDs,
+		SessionID:   sessionID,
 		Rights:      rights,
 		Code:        data.Code,
 		RedirectURI: data.RedirectUri,
@@ -130,7 +133,7 @@ func (s *storage) LoadAuthorize(code string) (data *osin.AuthorizeData, err erro
 		RedirectUri: authorizationCode.RedirectURI,
 		State:       authorizationCode.State,
 		CreatedAt:   authorizationCode.CreatedAt,
-		UserData:    userData{UserIdentifiers: authorizationCode.UserIDs},
+		UserData:    userData{UserIdentifiers: authorizationCode.UserIDs, SessionID: authorizationCode.SessionID},
 	}, nil
 }
 
@@ -185,6 +188,7 @@ func (s *storage) SaveAccess(data *osin.AccessData) error {
 		}
 	}
 	userIDs := data.UserData.(userData).UserIdentifiers
+	sessionID := data.UserData.(userData).SessionID
 	client := ttnpb.Client(data.Client.(osinClient))
 	rights := rightsFromScope(data.Scope)
 	if data.CreatedAt.IsZero() {
@@ -203,6 +207,7 @@ func (s *storage) SaveAccess(data *osin.AccessData) error {
 	return s.oauth.CreateAccessToken(s.ctx, &ttnpb.OAuthAccessToken{
 		ClientIDs:    client.ClientIdentifiers,
 		UserIDs:      userIDs,
+		SessionID:    sessionID,
 		Rights:       rights,
 		ID:           accessID,
 		AccessToken:  accessHash,
@@ -228,7 +233,7 @@ func (s *storage) loadAccess(id string) (*osin.AccessData, error) {
 		ExpiresIn:    int32(accessToken.ExpiresAt.Sub(accessToken.CreatedAt).Seconds()),
 		Scope:        rightsToScope(accessToken.Rights...),
 		CreatedAt:    accessToken.CreatedAt,
-		UserData:     userData{UserIdentifiers: accessToken.UserIDs, ID: id},
+		UserData:     userData{UserIdentifiers: accessToken.UserIDs, ID: id, SessionID: accessToken.SessionID},
 	}, nil
 }
 

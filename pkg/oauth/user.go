@@ -224,19 +224,14 @@ func (s *server) Logout(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	sessions, err := s.store.FindSessions(ctx, &at.UserIDs)
-	if err != nil {
-		return err
-	}
 	if err = s.store.DeleteAccessToken(ctx, id); err != nil {
 		return err
 	}
 	s.removeAuthCookie(c)
 	events.Publish(evtUserLogout(ctx, at.UserIDs, nil))
-	for _, session := range sessions {
-		if err = s.store.DeleteSession(ctx, &at.UserIDs, session.SessionID); err != nil {
-			return err
-		}
+	if err = s.store.DeleteSession(ctx, &at.UserIDs, at.SessionID); err != nil {
+		// TODO: Ignore not found, meaning that the session has already ended
+		return err
 	}
 	client, err := s.store.GetClient(ctx, &at.ClientIDs, &types.FieldMask{Paths: []string{"logout_redirect_uris"}})
 	if err != nil {

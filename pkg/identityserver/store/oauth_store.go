@@ -153,6 +153,7 @@ func (s *oauthStore) CreateAuthorizationCode(ctx context.Context, code *ttnpb.OA
 	codeModel := AuthorizationCode{
 		ClientID:    client.PrimaryKey(),
 		UserID:      user.PrimaryKey(),
+		SessionID:   code.SessionID,
 		Rights:      Rights{Rights: code.Rights},
 		Code:        code.Code,
 		RedirectURI: code.RedirectURI,
@@ -210,6 +211,7 @@ func (s *oauthStore) CreateAccessToken(ctx context.Context, token *ttnpb.OAuthAc
 	tokenModel := AccessToken{
 		ClientID:     client.PrimaryKey(),
 		UserID:       user.PrimaryKey(),
+		SessionID:    token.SessionID,
 		Rights:       Rights{Rights: token.Rights},
 		TokenID:      token.ID,
 		PreviousID:   previousID,
