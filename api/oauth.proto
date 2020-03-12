@@ -57,6 +57,7 @@ message ListOAuthClientAuthorizationsRequest {
 message OAuthAuthorizationCode {
   UserIdentifiers user_ids = 1 [(gogoproto.customname) = "UserIDs", (gogoproto.nullable) = false, (validate.rules).message.required = true];
   ClientIdentifiers client_ids = 2 [(gogoproto.customname) = "ClientIDs", (gogoproto.nullable) = false, (validate.rules).message.required = true];
+  string session_id = 9 [(gogoproto.customname) = "SessionID", (validate.rules).string.max_len = 64];
   repeated Right rights = 3;
   string code = 4;
   string redirect_uri = 5 [(gogoproto.customname) = "RedirectURI", (validate.rules).string.uri_ref = true];
@@ -74,6 +75,7 @@ message OAuthAccessTokenIdentifiers {
 message OAuthAccessToken {
   UserIdentifiers user_ids = 1 [(gogoproto.customname) = "UserIDs", (gogoproto.nullable) = false, (validate.rules).message.required = true];
   ClientIdentifiers client_ids = 2 [(gogoproto.customname) = "ClientIDs", (gogoproto.nullable) = false, (validate.rules).message.required = true];
+  string session_id = 9 [(gogoproto.customname) = "SessionID", (validate.rules).string.max_len = 64];
   string id = 3 [(gogoproto.customname) = "ID"];
   string access_token = 4;
   string refresh_token = 5;

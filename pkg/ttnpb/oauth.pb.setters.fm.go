@@ -248,6 +248,16 @@ func (dst *OAuthAuthorizationCode) SetFields(src *OAuthAuthorizationCode, paths 
 					dst.ClientIDs = zero
 				}
 			}
+		case "session_id":
+			if len(subs) > 0 {
+				return fmt.Errorf("'session_id' has no subfields, but %s were specified", subs)
+			}
+			if src != nil {
+				dst.SessionID = src.SessionID
+			} else {
+				var zero string
+				dst.SessionID = zero
+			}
 		case "rights":
 			if len(subs) > 0 {
 				return fmt.Errorf("'rights' has no subfields, but %s were specified", subs)
@@ -410,6 +420,16 @@ func (dst *OAuthAccessToken) SetFields(src *OAuthAccessToken, paths ...string) e
 					var zero ClientIdentifiers
 					dst.ClientIDs = zero
 				}
+			}
+		case "session_id":
+			if len(subs) > 0 {
+				return fmt.Errorf("'session_id' has no subfields, but %s were specified", subs)
+			}
+			if src != nil {
+				dst.SessionID = src.SessionID
+			} else {
+				var zero string
+				dst.SessionID = zero
 			}
 		case "id":
 			if len(subs) > 0 {
