@@ -44,6 +44,7 @@ require (
 	github.com/chrj/smtpd v0.1.2
 	github.com/client9/misspell v0.3.4
 	github.com/disintegration/imaging v1.6.2
+	github.com/dustin/go-humanize v1.0.0
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/envoyproxy/protoc-gen-validate v0.3.0-java
 	github.com/felixge/httpsnoop v1.0.1

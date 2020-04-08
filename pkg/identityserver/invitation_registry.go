@@ -49,10 +49,13 @@ func (is *IdentityServer) sendInvitation(ctx context.Context, in *ttnpb.SendInvi
 	if err != nil {
 		return nil, err
 	}
+	now := time.Now()
+	ttl := is.configFromContext(ctx).UserRegistration.Invitation.TokenTTL
+	expires := now.Add(ttl)
 	invitation := &ttnpb.Invitation{
 		Email:     in.Email,
 		Token:     token,
-		ExpiresAt: time.Now().Add(is.configFromContext(ctx).UserRegistration.Invitation.TokenTTL),
+		ExpiresAt: expires,
 	}
 	err = is.withDatabase(ctx, func(db *gorm.DB) (err error) {
 		invitation, err = store.GetInvitationStore(db).CreateInvitation(ctx, invitation)
@@ -67,6 +70,7 @@ func (is *IdentityServer) sendInvitation(ctx context.Context, in *ttnpb.SendInvi
 		return &emails.Invitation{
 			Data:            data,
 			InvitationToken: invitation.Token,
+			TTL:             ttl,
 		}
 	})
 	if err != nil {
