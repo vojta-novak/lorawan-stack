@@ -26,13 +26,14 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	echo "github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
+	"go.thethings.network/lorawan-stack/v3/pkg/auth"
 	"go.thethings.network/lorawan-stack/v3/pkg/errors"
 	"go.thethings.network/lorawan-stack/v3/pkg/fillcontext"
 	"go.thethings.network/lorawan-stack/v3/pkg/log"
-	"go.thethings.network/lorawan-stack/v3/pkg/random"
 	"go.thethings.network/lorawan-stack/v3/pkg/web/cookie"
 	"go.thethings.network/lorawan-stack/v3/pkg/webhandlers"
 	"go.thethings.network/lorawan-stack/v3/pkg/webmiddleware"
@@ -134,18 +135,8 @@ func New(ctx context.Context, opts ...Option) (*Server, error) {
 
 	hashKey, blockKey := options.cookieHashKey, options.cookieBlockKey
 
-	if len(hashKey) == 0 || isZeros(hashKey) {
-		hashKey = random.Bytes(64)
-		logger.WithField("hash_key", hashKey).Warn("No cookie hash key configured, generated a random one")
-	}
-
 	if len(hashKey) != 32 && len(hashKey) != 64 {
 		return nil, errors.New("Expected cookie hash key to be 32 or 64 bytes long")
-	}
-
-	if len(blockKey) == 0 || isZeros(blockKey) {
-		blockKey = random.Bytes(32)
-		logger.WithField("block_key", blockKey).Warn("No cookie block key configured, generated a random one")
 	}
 
 	if len(blockKey) != 32 {
@@ -154,7 +145,6 @@ func New(ctx context.Context, opts ...Option) (*Server, error) {
 
 	var proxyConfiguration webmiddleware.ProxyConfiguration
 	proxyConfiguration.ParseAndAddTrusted(options.trustedProxies...)
-
 	root := mux.NewRouter()
 	root.NotFoundHandler = http.HandlerFunc(webhandlers.NotFound)
 	root.Use(
@@ -166,6 +156,7 @@ func New(ctx context.Context, opts ...Option) (*Server, error) {
 		mux.MiddlewareFunc(webmiddleware.MaxBody(1<<24)), // 16 MB.
 		mux.MiddlewareFunc(webmiddleware.SecurityHeaders()),
 		mux.MiddlewareFunc(webmiddleware.Log(logger)),
+		mux.MiddlewareFunc(webmiddleware.Cookies(hashKey, blockKey)),
 	)
 
 	var redirectConfig webmiddleware.RedirectConfiguration
@@ -193,10 +184,32 @@ func New(ctx context.Context, opts ...Option) (*Server, error) {
 		mux.MiddlewareFunc(webmiddleware.Redirect(redirectConfig)),
 	)
 
+	// Define the skip check function for the CSRF middleware. If we use
+	// authorization other than cookie auth, the CSRF protection can be skipped,
+	// since the auth header protects against CSRF by itself.
+	csrfSkip := func(r *http.Request) bool {
+		authVal := r.Header.Get("Authorization")
+		if authVal != "" || !(strings.HasPrefix(authVal, "Bearer ")) {
+			token := strings.TrimPrefix(authVal, "Bearer ")
+			tokenType, _, _, err := auth.SplitToken(token)
+			if err == nil {
+				if tokenType == auth.SessionToken {
+					return false
+				}
+			}
+		}
+		return true
+	}
+	corsSkip := func(r *http.Request) bool {
+		return !csrfSkip(r)
+	}
+
 	apiRouter := mux.NewRouter()
 	apiRouter.NotFoundHandler = http.HandlerFunc(webhandlers.NotFound)
 	apiRouter.Use(
-		mux.MiddlewareFunc(webmiddleware.CORS(webmiddleware.CORSConfig{
+		mux.MiddlewareFunc(webmiddleware.CookieAuth("_session")),
+		mux.MiddlewareFunc(webmiddleware.CSRF(csrfSkip, hashKey, csrf.CookieName("_csrf"), csrf.Path("/api/v3"), csrf.SameSite(csrf.SameSiteStrictMode))),
+		mux.MiddlewareFunc(webmiddleware.CORS(corsSkip, webmiddleware.CORSConfig{
 			AllowedHeaders:   []string{"Authorization", "Content-Type", "X-CSRF-Token"},
 			AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete},
 			AllowedOrigins:   []string{"*"},
@@ -214,7 +227,7 @@ func New(ctx context.Context, opts ...Option) (*Server, error) {
 
 	server.Use(
 		echomiddleware.Gzip(),
-		cookie.Cookies(blockKey, hashKey),
+		cookie.Cookies(hashKey, blockKey),
 	)
 
 	s := &Server{
