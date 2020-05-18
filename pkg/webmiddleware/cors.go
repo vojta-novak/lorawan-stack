@@ -14,7 +14,11 @@
 
 package webmiddleware
 
-import "github.com/gorilla/handlers"
+import (
+	"net/http"
+
+	"github.com/gorilla/handlers"
+)
 
 // CORSConfig is the configuration for the CORS middleware.
 type CORSConfig struct {
@@ -25,6 +29,8 @@ type CORSConfig struct {
 	MaxAge           int
 	AllowCredentials bool
 }
+
+type skipFunction func(*http.Request) bool
 
 func (c CORSConfig) options() []handlers.CORSOption {
 	var options []handlers.CORSOption
@@ -49,7 +55,20 @@ func (c CORSConfig) options() []handlers.CORSOption {
 	return options
 }
 
-// CORS returns a middleware that handles Cross-Origin Resource Sharing.
-func CORS(config CORSConfig) MiddlewareFunc {
-	return MiddlewareFunc(handlers.CORS(config.options()...))
+// CORS returns a middleware that handles Cross-Origin Resource Sharing. The
+// skip parameter can be used to skip the decoration of CORS headers, based
+// on the request interface.
+func CORS(skip skipFunction, config CORSConfig) MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		if skip != nil {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if skip(r) {
+					next.ServeHTTP(w, r)
+					return
+				}
+				handlers.CORS(config.options()...)(next).ServeHTTP(w, r)
+			})
+		}
+		return handlers.CORS(config.options()...)(next)
+	}
 }
