@@ -19,6 +19,7 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "lorawan-stack/api/identifiers.proto";
+import "lorawan-stack/api/user.proto";
 import "lorawan-stack/api/oauth.proto";
 import "lorawan-stack/api/rights.proto";
 
@@ -34,6 +35,7 @@ message AuthInfoResponse {
   oneof access_method {
     AuthInfoResponse.APIKeyAccess api_key = 1 [(gogoproto.customname) = "APIKey"];
     OAuthAccessToken oauth_access_token = 2 [(gogoproto.customname) = "OAuthAccessToken"];
+    UserSession user_session = 5;
   }
   Rights universal_rights = 3;
   bool is_admin = 4;
