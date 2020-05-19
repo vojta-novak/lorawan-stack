@@ -1,4 +1,4 @@
-// Copyright © 2019 The Things Network Foundation, The Things Industries B.V.
+// Copyright © 2020 The Things Network Foundation, The Things Industries B.V.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,41 +14,30 @@
 
 import * as Yup from 'yup'
 
-import randomByteString from '../../../lib/random-bytes'
-import m from '../../../components/device-data-form/messages'
-import sharedMessages from '../../../../lib/shared-messages'
+import sharedMessages from '@ttn-lw/lib/shared-messages'
 
-import { parseLorawanMacVersion } from '../../device-general-settings/utils'
-
-const random16BytesString = () => randomByteString(32)
-const toUndefined = value => (!Boolean(value) ? undefined : value)
+import { parseLorawanMacVersion } from '@console/lib/device-utils'
 
 const validationSchema = Yup.object()
   .shape({
-    net_id: Yup.nullableString()
-      .emptyOrLength(3 * 2, m.validate6) // 3 Byte hex
-      .default(''),
     root_keys: Yup.object().when(
-      ['_external_js', '_lorawan_version'],
-      (externalJs, version, schema) => {
+      ['$lorawanVersion', '$mayEditKeys'],
+      (version, mayEditKeys, schema) => {
+        if (!mayEditKeys) {
+          return schema.strip()
+        }
+
         const strippedSchema = Yup.object().strip()
         const keySchema = Yup.lazy(() => {
-          return !externalJs
+          return mayEditKeys
             ? Yup.object().shape({
-                key: Yup.string()
-                  .emptyOrLength(16 * 2, m.validate32) // 16 Byte hex
-                  .transform(toUndefined)
-                  .default(random16BytesString),
+                key: Yup.string().emptyOrLength(
+                  16 * 2,
+                  Yup.passValues(sharedMessages.validateLength),
+                ), // 16 Byte hex.
               })
             : Yup.object().strip()
         })
-
-        if (externalJs) {
-          return schema.shape({
-            nwk_key: strippedSchema,
-            app_key: strippedSchema,
-          })
-        }
 
         if (parseLorawanMacVersion(version) < 110) {
           return schema.shape({
@@ -63,10 +52,15 @@ const validationSchema = Yup.object()
         })
       },
     ),
-    resets_join_nonces: Yup.boolean().when('_lorawan_version', {
+    net_id: Yup.nullableString().emptyOrLength(
+      3 * 2,
+      Yup.passValues(sharedMessages.validateLength),
+    ), // 3 Byte hex
+    // .default(''),
+    resets_join_nonces: Yup.boolean().when('$lorawanVersion', {
       // Verify if lorawan version is 1.1.0 or higher.
       is: version => parseLorawanMacVersion(version) >= 110,
-      then: schema => schema,
+      then: schema => schema.default(false),
       otherwise: schema => schema.strip(),
     }),
     application_server_id: Yup.string()
@@ -78,8 +72,6 @@ const validationSchema = Yup.object()
     network_server_kek_label: Yup.string()
       .max(2048, sharedMessages.validateTooLong)
       .default(''),
-    _external_js: Yup.boolean().default(false),
-    _lorawan_version: Yup.string().default('1.1.0'),
   })
   .noUnknown()
 
