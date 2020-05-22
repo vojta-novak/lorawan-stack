@@ -54,6 +54,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.OTAA)
+      expect(validatedValue.supports_join).toBe(true)
+      expect(validatedValue.multicast).toBe(false)
     })
 
     it('should process `ABP` activation mode', () => {
@@ -62,6 +64,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.ABP)
+      expect(validatedValue.supports_join).toBe(false)
+      expect(validatedValue.multicast).toBe(false)
     })
 
     it('should process `multicast` activation mode', () => {
@@ -70,6 +74,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.MULTICAST)
+      expect(validatedValue.supports_join).toBe(false)
+      expect(validatedValue.multicast).toBe(true)
     })
 
     it('should process `none` activation mode', () => {
@@ -78,6 +84,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.NONE)
+      expect(validatedValue.supports_join).toBeUndefined()
+      expect(validatedValue.multicast).toBeUndefined()
     })
 
     it('should process `join_server_address`', () => {
@@ -206,6 +214,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.OTAA)
+      expect(validatedValue.supports_join).toBe(true)
+      expect(validatedValue.multicast).toBeUndefined()
     })
 
     it('should process `none` activation mode', () => {
@@ -214,6 +224,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.NONE)
+      expect(validatedValue.supports_join).toBeUndefined()
+      expect(validatedValue.multicast).toBeUndefined()
     })
 
     it('should process `join_server_address`', () => {
@@ -300,6 +312,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.ABP)
+      expect(validatedValue.supports_join).toBeUndefined()
+      expect(validatedValue.multicast).toBe(false)
     })
 
     it('should process `multicast` activation mode', () => {
@@ -308,6 +322,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.MULTICAST)
+      expect(validatedValue.supports_join).toBeUndefined()
+      expect(validatedValue.multicast).toBe(true)
     })
 
     it('should process `none` activation mode', () => {
@@ -316,6 +332,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.NONE)
+      expect(validatedValue.supports_join).toBeUndefined()
+      expect(validatedValue.multicast).toBeUndefined()
     })
 
     it('should strip `join_server_address`', () => {
@@ -458,6 +476,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.NONE)
+      expect(validatedValue.supports_join).toBeUndefined()
+      expect(validatedValue.multicast).toBeUndefined()
     })
 
     it('should strip `join_server_address`', () => {
@@ -516,6 +536,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.OTAA)
+      expect(validatedValue.supports_join).toBe(true)
+      expect(validatedValue.multicast).toBe(false)
     })
 
     it('should process `ABP` activation mode', () => {
@@ -524,6 +546,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.ABP)
+      expect(validatedValue.supports_join).toBe(false)
+      expect(validatedValue.multicast).toBe(false)
     })
 
     it('should process `multicast` activation mode', () => {
@@ -532,6 +556,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.MULTICAST)
+      expect(validatedValue.supports_join).toBe(false)
+      expect(validatedValue.multicast).toBe(true)
     })
 
     it('should process `none` activation mode', () => {
@@ -540,6 +566,8 @@ describe('<ConfigurationForm /> validation schema', () => {
       const validatedValue = validate(schema)
 
       expect(validatedValue._activation_mode).toBe(ACTIVATION_MODES.NONE)
+      expect(validatedValue.supports_join).toBeUndefined()
+      expect(validatedValue.multicast).toBeUndefined()
     })
 
     it('should strip `join_server_address`', () => {
@@ -642,6 +670,8 @@ describe('<ConfigurationForm /> validation schema', () => {
 
       expect(validatedValue).toBeDefined()
       expect(validatedValue.join_server_address).toBeUndefined()
+      expect(validatedValue.supports_join).toBe(true)
+      expect(validatedValue.multicast).toBe(false)
     })
   })
 })

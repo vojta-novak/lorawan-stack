@@ -62,6 +62,45 @@ const validationSchema = Yup.object()
       },
     ),
     lorawan_version: Yup.string().required(sharedMessages.validateRequired),
+    supports_join: Yup.boolean().when(
+      ['$jsEnabled', '_activation_mode'],
+      (jsEnabled, activationMode, schema) => {
+        if (!jsEnabled || activationMode === ACTIVATION_MODES.NONE) {
+          return schema.strip()
+        }
+
+        if (activationMode === ACTIVATION_MODES.OTAA) {
+          return schema.default(true)
+        }
+
+        if (
+          activationMode === ACTIVATION_MODES.ABP ||
+          activationMode === ACTIVATION_MODES.MULTICAST
+        ) {
+          return schema.default(false)
+        }
+
+        return schema
+      },
+    ),
+    multicast: Yup.boolean().when(
+      ['$nsEnabled', '_activation_mode'],
+      (nsEnabled, activationMode, schema) => {
+        if (!nsEnabled || activationMode === ACTIVATION_MODES.NONE) {
+          return schema.strip()
+        }
+
+        if (activationMode === ACTIVATION_MODES.OTAA || activationMode === ACTIVATION_MODES.ABP) {
+          return schema.default(false)
+        }
+
+        if (activationMode === ACTIVATION_MODES.MULTICAST) {
+          return schema.default(true)
+        }
+
+        return schema
+      },
+    ),
     _external_js: Yup.boolean(),
     _activation_mode: Yup.mixed().when(
       ['$nsEnabled', '$jsEnabled'],

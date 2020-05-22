@@ -24,8 +24,6 @@ import Radio from '@ttn-lw/components/radio-button'
 import Form from '@ttn-lw/components/form'
 import Checkbox from '@ttn-lw/components/checkbox'
 
-import m from '@console/components/device-data-form/messages'
-
 import PropTypes from '@ttn-lw/lib/prop-types'
 import sharedMessages from '@ttn-lw/lib/shared-messages'
 
@@ -37,6 +35,7 @@ const messages = defineMessages({
   activationModeWarning: 'Activation mode selection unavailable',
   nsActivationModeWarning: 'ABP and multicast activation mode selection unavailable',
   jsActivationModeWarning: 'OTAA mode selection unavailable',
+  start: 'Start',
 })
 
 const ConfigurationForm = React.memo(props => {
@@ -51,76 +50,68 @@ const ConfigurationForm = React.memo(props => {
 
   const formRef = React.useRef(null)
 
+  const validationContext = React.useMemo(
+    () => ({
+      asUrl,
+      nsUrl,
+      jsUrl,
+      asEnabled,
+      jsEnabled,
+      nsEnabled,
+    }),
+    [asEnabled, asUrl, jsEnabled, jsUrl, nsEnabled, nsUrl],
+  )
+
   const [activationMode, setActivationMode] = React.useState(ACTIVATION_MODES.NONE)
   const handleActivationModeChange = React.useCallback(
     mode => {
-      const { setValues, state } = formRef.current
+      const { setValues, values } = formRef.current
 
       setActivationMode(mode)
       setValues(
         validationSchema.cast(
           {
-            ...state.values,
+            ...values,
             _activation_mode: mode,
           },
           {
-            context: {
-              asUrl,
-              nsUrl,
-              jsUrl,
-              asEnabled,
-              jsEnabled,
-              nsEnabled,
-            },
+            context: validationContext,
           },
         ),
       )
     },
-    [asEnabled, asUrl, jsEnabled, jsUrl, nsEnabled, nsUrl],
+    [validationContext],
   )
 
   const [externalJs, setExternalJs] = React.useState(!jsEnabled)
   const handleExternalJsChange = React.useCallback(
     evt => {
       const { checked } = evt.target
-      const { setValues, state } = formRef.current
+      const { setValues, values } = formRef.current
 
       setExternalJs(checked)
       setValues(
         validationSchema.cast(
           {
-            ...state.values,
+            ...values,
             _external_js: checked,
           },
           {
-            context: {
-              asUrl,
-              nsUrl,
-              jsUrl,
-              asEnabled,
-              jsEnabled,
-              nsEnabled,
-            },
+            context: validationContext,
           },
         ),
       )
     },
-    [asEnabled, asUrl, jsEnabled, jsUrl, nsEnabled, nsUrl],
+    [validationContext],
   )
 
   const validate = React.useCallback(
     values =>
       validationSchema.validateSync(values, {
-        context: {
-          asUrl,
-          jsUrl,
-          nsUrl,
-          asEnabled,
-          jsEnabled,
-          nsEnabled,
-        },
+        abortEarly: false,
+        context: validationContext,
       }),
-    [asEnabled, asUrl, jsEnabled, jsUrl, nsEnabled, nsUrl],
+    [validationContext],
   )
 
   const formInitialValues = React.useMemo(
@@ -128,7 +119,7 @@ const ConfigurationForm = React.memo(props => {
       validationSchema.cast(
         merge(
           {
-            _external_js: !jsEnabled,
+            _external_js: !validationContext.jsEnabled,
             _activation_mode: ACTIVATION_MODES.NONE,
             application_server_address: undefined,
             network_server_address: undefined,
@@ -138,42 +129,21 @@ const ConfigurationForm = React.memo(props => {
           initialValues,
         ),
         {
-          context: {
-            asUrl,
-            nsUrl,
-            jsUrl,
-            asEnabled,
-            jsEnabled,
-            nsEnabled,
-          },
+          context: validationContext,
         },
       ),
-    [asEnabled, asUrl, initialValues, jsEnabled, jsUrl, nsEnabled, nsUrl],
+    [initialValues, validationContext],
   )
 
   const onFormSubmit = React.useCallback(
     (values, formikBag) => {
       const { _activation_mode, _external_js, ...configuration } = validationSchema.cast(values, {
-        context: {
-          asUrl,
-          jsUrl,
-          nsUrl,
-          asEnabled,
-          jsEnabled,
-          nsEnabled,
-        },
+        context: validationContext,
       })
-      if (nsEnabled) {
-        if (jsEnabled) {
-          configuration.supports_join = _activation_mode === ACTIVATION_MODES.OTAA
-        }
-
-        configuration.multicast = _activation_mode === ACTIVATION_MODES.MULTICAST
-      }
 
       return onSubmit(configuration, formikBag)
     },
-    [asEnabled, asUrl, jsEnabled, jsUrl, nsEnabled, nsUrl, onSubmit],
+    [onSubmit, validationContext],
   )
 
   let activationModeWarning
@@ -192,20 +162,22 @@ const ConfigurationForm = React.memo(props => {
 
   return (
     <Form
-      validate={validate}
+      validationSchema={validationSchema}
+      validationContext={validationContext}
       initialValues={formInitialValues}
       onSubmit={onFormSubmit}
       formikRef={formRef}
     >
       <Form.Field
+        required
+        autoFocus
         title={sharedMessages.macVersion}
         name="lorawan_version"
         component={Select}
-        required
         options={LORAWAN_VERSIONS}
       />
       <Form.Field
-        title={m.activationMode}
+        title={sharedMessages.activationMode}
         name="_activation_mode"
         component={Radio.Group}
         horizontal={false}
@@ -215,9 +187,13 @@ const ConfigurationForm = React.memo(props => {
         onChange={handleActivationModeChange}
       >
         <Radio label={sharedMessages.none} value={ACTIVATION_MODES.NONE} />
-        <Radio label={m.abp} value={ACTIVATION_MODES.ABP} />
-        <Radio label={m.multicast} value={ACTIVATION_MODES.MULTICAST} />
-        <Radio label={m.otaa} value={ACTIVATION_MODES.OTAA} disabled={!jsConfig.enabled} />
+        <Radio label={sharedMessages.abp} value={ACTIVATION_MODES.ABP} />
+        <Radio label={sharedMessages.multicast} value={ACTIVATION_MODES.MULTICAST} />
+        <Radio
+          label={sharedMessages.otaa}
+          value={ACTIVATION_MODES.OTAA}
+          disabled={!jsConfig.enabled}
+        />
       </Form.Field>
       <Form.Field
         title={sharedMessages.applicationServerAddress}
@@ -235,8 +211,8 @@ const ConfigurationForm = React.memo(props => {
         <>
           {showExternalJs && (
             <Form.Field
-              title={m.externalJoinServer}
-              description={m.externalJoinServerDescription}
+              title={sharedMessages.externalJoinServer}
+              description={sharedMessages.externalJoinServerDescription}
               name="_external_js"
               onChange={handleExternalJsChange}
               component={Checkbox}
@@ -244,7 +220,7 @@ const ConfigurationForm = React.memo(props => {
           )}
           <Form.Field
             title={sharedMessages.joinServerAddress}
-            placeholder={externalJs ? m.external : sharedMessages.addressPlaceholder}
+            placeholder={externalJs ? sharedMessages.external : sharedMessages.addressPlaceholder}
             name="join_server_address"
             component={Input}
             disabled={externalJs}
@@ -252,7 +228,7 @@ const ConfigurationForm = React.memo(props => {
         </>
       )}
       <SubmitBar>
-        <Form.Submit component={SubmitButton} message={sharedMessages.next} />
+        <Form.Submit component={SubmitButton} message={messages.start} />
       </SubmitBar>
     </Form>
   )
