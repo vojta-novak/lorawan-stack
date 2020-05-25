@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unsetting NwkKey in Join Server.
 - CSRF token validation issues preventing login and logout in some circumstances.
 - Typo in Application Server configuration documentation (webhook downlink).
+- Setting some NS default MAC settings from the command line.
 
 ### Security
 

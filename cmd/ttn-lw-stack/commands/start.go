@@ -167,6 +167,7 @@ var startCommand = &cobra.Command{
 		if start.NetworkServer || startDefault {
 			redisConsumerGroup := "ns"
 
+			config.NS = networkserver.HandleDefaultConfigValues(config.NS)
 			logger.Info("Setting up Network Server")
 			config.NS.ApplicationUplinks = nsredis.NewApplicationUplinkQueue(
 				redis.New(config.Redis.WithNamespace("ns", "application-uplinks")),

@@ -493,9 +493,10 @@ func (m *Manager) setDefaults(prefix string, flags *pflag.FlagSet, config interf
 				m.viper.SetDefault(name, str)
 				flags.StringP(name, shorthand, str, description)
 
-			case ttnpb.RxDelay:
-				m.viper.SetDefault(name, int32(val))
-				flags.Int32P(name, shorthand, int32(val), description)
+			case ttnpb.RxDelay, ttnpb.ADRAckDelayExponent, ttnpb.AggregatedDutyCycle, ttnpb.ADRAckLimitExponent:
+				fieldValue := reflect.Indirect(configValue.Field(i)).Int()
+				m.viper.SetDefault(name, int32(fieldValue))
+				flags.Int32P(name, shorthand, int32(fieldValue), description)
 
 			default:
 				switch fieldKind {

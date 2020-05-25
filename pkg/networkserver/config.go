@@ -137,5 +137,29 @@ var DefaultConfig = Config{
 		ClassCTimeout:          func(v time.Duration) *time.Duration { return &v }(DefaultClassCTimeout),
 		StatusTimePeriodicity:  func(v time.Duration) *time.Duration { return &v }(DefaultStatusTimePeriodicity),
 		StatusCountPeriodicity: func(v uint32) *uint32 { return &v }(DefaultStatusCountPeriodicity),
+
+		DesiredADRAckDelayExponent: func(val ttnpb.ADRAckDelayExponent) *ttnpb.ADRAckDelayExponent { return &val }(-1),
+		DesiredMaxDutyCycle:        func(val ttnpb.AggregatedDutyCycle) *ttnpb.AggregatedDutyCycle { return &val }(-1),
+		DesiredADRAckLimitExponent: func(val ttnpb.ADRAckLimitExponent) *ttnpb.ADRAckLimitExponent { return &val }(-1),
 	},
+}
+
+// HandleDefaultConfigValues converts default -1 values to nil
+func HandleDefaultConfigValues(c Config) Config {
+	if c.DefaultMACSettings.DesiredADRAckDelayExponent != nil {
+		if *c.DefaultMACSettings.DesiredADRAckDelayExponent == -1 {
+			c.DefaultMACSettings.DesiredADRAckDelayExponent = nil
+		}
+	}
+	if c.DefaultMACSettings.DesiredADRAckLimitExponent != nil {
+		if *c.DefaultMACSettings.DesiredADRAckLimitExponent == -1 {
+			c.DefaultMACSettings.DesiredADRAckLimitExponent = nil
+		}
+	}
+	if c.DefaultMACSettings.DesiredMaxDutyCycle != nil {
+		if *c.DefaultMACSettings.DesiredMaxDutyCycle == -1 {
+			c.DefaultMACSettings.DesiredMaxDutyCycle = nil
+		}
+	}
+	return c
 }
