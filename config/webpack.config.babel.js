@@ -25,6 +25,7 @@ import CleanWebpackPlugin from 'clean-webpack-plugin'
 import ShellPlugin from 'webpack-shell-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import HashOutput from 'webpack-plugin-hash-output'
+import SentryWebpackPlugin from '@sentry/webpack-plugin'
 import nib from 'nib'
 
 import pjson from '../package.json'
@@ -47,6 +48,8 @@ const WEBPACK_DEV_SERVER_USE_TLS = process.env.WEBPACK_DEV_SERVER_USE_TLS === 't
 const TTN_LW_TLS_CERTIFICATE = process.env.TTN_LW_TLS_CERTIFICATE || './cert.pem'
 const TTN_LW_TLS_KEY = process.env.TTN_LW_TLS_KEY || './key.pem'
 const TTN_LW_TLS_ROOT_CA = process.env.TTN_LW_TLS_ROOT_CA || './cert.pem'
+const WEBPACK_UPLOAD_SENTRY_SOURCEMAPS =
+  Boolean(process.env.SENTRY_DSN) && process.env.WEBPACK_UPLOAD_SENTRY_SOURCEMAPS === 'true'
 
 const ASSETS_ROOT = '/assets'
 
@@ -202,6 +205,21 @@ export default {
   },
   plugins: env({
     all: [
+      ...(WEBPACK_UPLOAD_SENTRY_SOURCEMAPS
+        ? [
+            new webpack.SourceMapDevToolPlugin({
+              filename: '[file].map',
+              exclude: /^(?!(console|oauth).*$).*/,
+            }),
+            new SentryWebpackPlugin({
+              release: version,
+              include: './public/',
+              ignoreFile: './config/.sentryignore',
+              ext: ['js', 'map', 'css'],
+              urlPrefix: ['~/assets/'],
+            }),
+          ]
+        : []),
       new HashOutput(),
       new webpack.NamedModulesPlugin(),
       new webpack.NamedChunksPlugin(),
