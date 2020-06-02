@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- End device creation form with wizard in the Console.
+
 ### Deprecated
 
 ### Removed
