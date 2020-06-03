@@ -72,10 +72,10 @@ const BasicSettingsForm = props => {
         <>
           {isOTAA && (
             <JoinEUIPrefixesInput
-              title={lwVersion < 110 ? sharedMessages.appEUI : sharedMessages.joinEUI}
+              title={lwVersion < 104 ? sharedMessages.appEUI : sharedMessages.joinEUI}
               name="ids.join_eui"
               description={
-                lwVersion < 110
+                lwVersion < 104
                   ? sharedMessages.appEUIDescription
                   : sharedMessages.joinEUIDescription
               }
