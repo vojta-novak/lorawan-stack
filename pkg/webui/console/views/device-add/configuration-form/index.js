@@ -35,6 +35,7 @@ const messages = defineMessages({
   activationModeWarning: 'Activation mode selection unavailable',
   nsActivationModeWarning: 'ABP and multicast activation mode selection unavailable',
   jsActivationModeWarning: 'OTAA mode selection unavailable',
+  activationModeNone: 'Do not configure activation',
   start: 'Start',
 })
 
@@ -184,7 +185,7 @@ const ConfigurationForm = React.memo(props => {
           value={ACTIVATION_MODES.MULTICAST}
           disabled={!nsEnabled}
         />
-        <Radio label={sharedMessages.none} value={ACTIVATION_MODES.NONE} />
+        <Radio label={messages.activationModeNone} value={ACTIVATION_MODES.NONE} />
       </Form.Field>
       {asEnabled && (
         <Form.Field
