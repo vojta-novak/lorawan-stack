@@ -59,6 +59,7 @@ const BasicSettingsForm = props => {
       validationSchema={validationSchema}
       validationContext={validationContext}
       initialValues={defaultInitialValues}
+      error={error}
     >
       <Form.Field
         required
