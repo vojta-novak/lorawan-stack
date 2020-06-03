@@ -177,14 +177,14 @@ const ConfigurationForm = React.memo(props => {
         warning={activationModeWarning}
         onChange={handleActivationModeChange}
       >
-        <Radio label={sharedMessages.none} value={ACTIVATION_MODES.NONE} />
+        <Radio label={sharedMessages.otaa} value={ACTIVATION_MODES.OTAA} disabled={!jsEnabled} />
         <Radio label={sharedMessages.abp} value={ACTIVATION_MODES.ABP} disabled={!nsEnabled} />
         <Radio
           label={sharedMessages.multicast}
           value={ACTIVATION_MODES.MULTICAST}
           disabled={!nsEnabled}
         />
-        <Radio label={sharedMessages.otaa} value={ACTIVATION_MODES.OTAA} disabled={!jsEnabled} />
+        <Radio label={sharedMessages.none} value={ACTIVATION_MODES.NONE} />
       </Form.Field>
       {asEnabled && (
         <Form.Field
