@@ -105,15 +105,6 @@ const ConfigurationForm = React.memo(props => {
     [validationContext],
   )
 
-  const validate = React.useCallback(
-    values =>
-      validationSchema.validateSync(values, {
-        abortEarly: false,
-        context: validationContext,
-      }),
-    [validationContext],
-  )
-
   const formInitialValues = React.useMemo(
     () =>
       validationSchema.cast(
