@@ -178,26 +178,30 @@ const ConfigurationForm = React.memo(props => {
         onChange={handleActivationModeChange}
       >
         <Radio label={sharedMessages.none} value={ACTIVATION_MODES.NONE} />
-        <Radio label={sharedMessages.abp} value={ACTIVATION_MODES.ABP} />
-        <Radio label={sharedMessages.multicast} value={ACTIVATION_MODES.MULTICAST} />
+        <Radio label={sharedMessages.abp} value={ACTIVATION_MODES.ABP} disabled={!nsEnabled} />
         <Radio
-          label={sharedMessages.otaa}
-          value={ACTIVATION_MODES.OTAA}
-          disabled={!jsConfig.enabled}
+          label={sharedMessages.multicast}
+          value={ACTIVATION_MODES.MULTICAST}
+          disabled={!nsEnabled}
         />
+        <Radio label={sharedMessages.otaa} value={ACTIVATION_MODES.OTAA} disabled={!jsEnabled} />
       </Form.Field>
-      <Form.Field
-        title={sharedMessages.applicationServerAddress}
-        placeholder={sharedMessages.addressPlaceholder}
-        name="application_server_address"
-        component={Input}
-      />
-      <Form.Field
-        title={sharedMessages.networkServerAddress}
-        placeholder={sharedMessages.addressPlaceholder}
-        name="network_server_address"
-        component={Input}
-      />
+      {asEnabled && (
+        <Form.Field
+          title={sharedMessages.applicationServerAddress}
+          placeholder={sharedMessages.addressPlaceholder}
+          name="application_server_address"
+          component={Input}
+        />
+      )}
+      {nsEnabled && (
+        <Form.Field
+          title={sharedMessages.networkServerAddress}
+          placeholder={sharedMessages.addressPlaceholder}
+          name="network_server_address"
+          component={Input}
+        />
+      )}
       {activationMode === ACTIVATION_MODES.OTAA && (
         <>
           {showExternalJs && (
