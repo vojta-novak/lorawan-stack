@@ -84,6 +84,7 @@ const NetworkSettingsForm = props => {
       initialValues={defaultFormValues}
       validationSchema={validationSchema}
       validationContext={validationContext}
+      error={error}
     >
       <NsFrequencyPlansSelect required autoFocus name="frequency_plan_id" />
       <Form.Field
