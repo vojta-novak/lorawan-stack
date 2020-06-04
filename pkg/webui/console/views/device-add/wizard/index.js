@@ -16,6 +16,7 @@ import React from 'react'
 
 import Wizard from '@ttn-lw/components/wizard'
 
+import sharedMessages from '@ttn-lw/lib/shared-messages'
 import getHostnameFromUrl from '@ttn-lw/lib/host-from-url'
 import PropTypes from '@ttn-lw/lib/prop-types'
 
@@ -82,6 +83,7 @@ const DeviceWizard = React.memo(props => {
     {
       initialValues: configuration,
       onComplete: handleWizardComplete,
+      completeMessage: sharedMessages.addDevice,
     },
     ({ snapshot, dirty }) => {
       const stepperStatus = Boolean(error) ? 'failure' : 'current'
