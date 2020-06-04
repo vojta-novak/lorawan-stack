@@ -38,7 +38,7 @@ import ConfigurationForm from './configuration-form'
 import DeviceWizard from './wizard'
 
 const m = defineMessages({
-  title: 'Configure new end device',
+  title: 'Add new end device',
 })
 
 const FunctionalDeviceAdd = React.memo(props => {
