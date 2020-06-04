@@ -203,3 +203,15 @@ The cluster keys are 128 bit, hex-encoded keys that cluster components use to au
 It is possible to configure the cluster to use TLS or not. We recommend to enable TLS for production deployments.
 
 - `cluster.tls`: Do cluster gRPC over TLS
+
+## Sentry Options
+
+It is possible to configure backend and frontend error reporting with Sentry.
+
+In order to use Sentry to upload `console` and `oauth` frontend application sourcemaps, the following configuration is necessary. This configuration can only be passed as environment variables.
+
+- `SENTRY_ORG`: Name of your Sentry organization
+- `SENTRY_PROJECT`: Name of your Sentry project
+- `SENTRY_AUTH_TOKEN`: Authentication token that you can create using `sentry-cli` or within your Sentry web interface
+- `SENTRY_DSN`: DSN of your Sentry project
+- `WEBPACK_UPLOAD_SENTRY_SOURCEMAPS`: Flag indicating whether you want to upload sourcemaps
