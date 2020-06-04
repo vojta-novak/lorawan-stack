@@ -16,6 +16,8 @@ package ttnmage
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"path"
@@ -34,6 +36,30 @@ func execHugo(args ...string) error {
 	return execGo("run", append([]string{"-tags", "extended", "github.com/gohugoio/hugo", "-s", "./doc"}, args...)...)
 }
 
+// https://golangcode.com/download-a-file-from-a-url/
+// DownloadFile will download a url to a local file. It's efficient because it will
+// write as it downloads and not load the whole file into memory.
+func downloadFile(filepath string, url string) error {
+
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
+
 func (d Docs) yarn() (func(args ...string) error, error) {
 	if _, err := os.Stat(nodeBin("yarn")); os.IsNotExist(err) {
 		if err = installYarn(); err != nil {
@@ -47,6 +73,14 @@ func (d Docs) yarn() (func(args ...string) error, error) {
 
 // Deps installs the documentation dependencies.
 func (d Docs) Deps() error {
+	fileUrl := "https://raw.githubusercontent.com/TheThingsNetwork/lorawan-frequency-plans/master/frequency-plans.yml"
+	error := downloadFile("doc/data/frequency-plans.yml", fileUrl)
+	if error != nil {
+		panic(error)
+	}
+	if mg.Verbose() {
+		fmt.Println("Downloaded: " + fileUrl)
+	}
 	changed, err := target.Path("./doc/themes/the-things-stack/node_modules", "./doc/themes/the-things-stack/package.json", "./doc/themes/the-things-stack/yarn.lock")
 	if os.IsNotExist(err) || (err == nil && changed) {
 		if mg.Verbose() {
