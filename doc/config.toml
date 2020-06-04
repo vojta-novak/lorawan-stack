@@ -29,9 +29,9 @@ pygmentsUseClasses = true
   github_repository_edit = "https://github.com/TheThingsNetwork/lorawan-stack/edit/master/doc/content"
   version = "v3.8.1"
   [params.search]
-    enabled = true
-    api_key = "4372282a02970d8402d43457bf95d486"
-    index = "thethingsstack"
+    enabled = false
+    apikey = ""
+    index = ""
 
 [markup]
   [markup.goldmark]

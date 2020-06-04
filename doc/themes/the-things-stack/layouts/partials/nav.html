@@ -22,11 +22,6 @@
         <a class="navbar-item{{ if $currentPage.IsMenuCurrent "main" . }} is-active{{ end }}" href="{{ .URL }}">{{ .Pre }}{{ .Name }}</a>
         {{- end }}
       </div>
-      {{- if .Site.Params.search.enabled -}}
-      <form class="navbar-item">
-        <input class="navbar-item" id="search-input" type="text" placeholder="Search" type="text">
-      </form>
-      {{- end -}}
       <div class="navbar-end">
         {{- if .Site.Menus.right }}
         {{- range .Site.Menus.right }}
@@ -44,14 +39,3 @@
     </div>
   </div>
 </nav>
-
-{{- if .Site.Params.search.enabled -}}
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
-<script type="text/javascript"> docsearch({
-apiKey: {{ .Site.Params.search.api_key }},
-indexName: {{ .Site.Params.search.index }},
-inputSelector: '#search-input',
-debug: false // Set debug to true if you want to inspect the dropdown
-});
-</script>
-{{- end }}
