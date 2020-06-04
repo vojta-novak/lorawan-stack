@@ -122,7 +122,7 @@ const DeviceWizard = React.memo(props => {
             )}
           </Wizard.Stepper>
           <Wizard.Steps>
-            <Wizard.Step>
+            <Wizard.Step title={m.basicTitle}>
               <BasicSettingsForm
                 error={error}
                 activationMode={activationMode}
@@ -132,7 +132,7 @@ const DeviceWizard = React.memo(props => {
               />
             </Wizard.Step>
             {showNetworkStep && (
-              <Wizard.Step>
+              <Wizard.Step title={m.networkTitle}>
                 <NetworkSettingsForm
                   error={error}
                   activationMode={activationMode}
@@ -144,7 +144,7 @@ const DeviceWizard = React.memo(props => {
               </Wizard.Step>
             )}
             {showApplicationStep && (
-              <Wizard.Step>
+              <Wizard.Step title={m.appTitle}>
                 <ApplicationSettingsForm
                   error={error}
                   mayEditKeys={mayEditKeys}
@@ -154,7 +154,7 @@ const DeviceWizard = React.memo(props => {
               </Wizard.Step>
             )}
             {showJoinStep && (
-              <Wizard.Step>
+              <Wizard.Step title={m.joinTitle}>
                 <JoinSettingsForm
                   error={error}
                   lorawanVersion={lorawanVersion}
