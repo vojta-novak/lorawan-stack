@@ -98,12 +98,12 @@ const FunctionalDeviceAdd = React.memo(props => {
 
   return (
     <Container>
-      <Switch>
-        <Route exact path={`${match.url}`}>
-          {() => (
-            <Row>
-              <Col lg={8} md={12}>
-                <PageTitle title={m.title} />
+      <Row>
+        <Col lg={8} md={12}>
+          <PageTitle title={m.title} />
+          <Switch>
+            <Route exact path={`${match.url}`}>
+              {() => (
                 <ConfigurationForm
                   asConfig={asConfig}
                   jsConfig={jsConfig}
@@ -111,15 +111,11 @@ const FunctionalDeviceAdd = React.memo(props => {
                   onSubmit={handleConfigurationSubmit}
                   initialValues={configuration}
                 />
-              </Col>
-            </Row>
-          )}
-        </Route>
-        <Route path={`${match.url}/steps`}>
-          {({ match }) =>
-            hasConfiguration ? (
-              <Row>
-                <Col lg={8} md={12}>
+              )}
+            </Route>
+            <Route path={`${match.url}/steps`}>
+              {({ match }) =>
+                hasConfiguration ? (
                   <DeviceWizard
                     createDevice={handleCreateDevice}
                     createDeviceSuccess={handleCreateDeviceSuccess}
@@ -131,12 +127,12 @@ const FunctionalDeviceAdd = React.memo(props => {
                     configuration={configuration}
                     match={match}
                   />
-                </Col>
-              </Row>
-            ) : null
-          }
-        </Route>
-      </Switch>
+                ) : null
+              }
+            </Route>
+          </Switch>
+        </Col>
+      </Row>
     </Container>
   )
 })
