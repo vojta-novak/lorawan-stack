@@ -265,7 +265,7 @@
   "console.views.device-add.configuration-form.index.jsActivationModeWarning": "OTAA mode selection unavailable",
   "console.views.device-add.configuration-form.index.activationModeNone": "Do not configure activation",
   "console.views.device-add.configuration-form.index.start": "Start",
-  "console.views.device-add.index.title": "Configure new end device",
+  "console.views.device-add.index.title": "Add new end device",
   "console.views.device-add.messages.basicTitle": "Basic settings",
   "console.views.device-add.messages.basicDescription": "General settings of the end device. End device ID's, Name and Description",
   "console.views.device-add.messages.basicDetails": "Defines general settings of an end device",
