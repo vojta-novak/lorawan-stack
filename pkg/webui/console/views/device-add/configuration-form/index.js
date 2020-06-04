@@ -63,7 +63,13 @@ const ConfigurationForm = React.memo(props => {
     [asEnabled, asUrl, jsEnabled, jsUrl, nsEnabled, nsUrl],
   )
 
-  const [activationMode, setActivationMode] = React.useState(ACTIVATION_MODES.NONE)
+  const initialActivationMode = jsEnabled
+    ? ACTIVATION_MODES.OTAA
+    : nsEnabled
+    ? ACTIVATION_MODES.ABP
+    : ACTIVATION_MODES.NONE
+
+  const [activationMode, setActivationMode] = React.useState(initialActivationMode)
   const handleActivationModeChange = React.useCallback(
     mode => {
       const { setValues, values } = formRef.current
@@ -107,13 +113,7 @@ const ConfigurationForm = React.memo(props => {
   )
 
   const formInitialValues = React.useMemo(() => {
-    const { jsEnabled, nsEnabled } = validationContext
-
-    const initialActivationMode = jsEnabled
-      ? ACTIVATION_MODES.OTAA
-      : nsEnabled
-      ? ACTIVATION_MODES.ABP
-      : ACTIVATION_MODES.NONE
+    const { jsEnabled } = validationContext
 
     return validationSchema.cast(
       merge(
@@ -131,7 +131,7 @@ const ConfigurationForm = React.memo(props => {
         context: validationContext,
       },
     )
-  }, [initialValues, validationContext])
+  }, [initialActivationMode, initialValues, validationContext])
 
   const onFormSubmit = React.useCallback(
     (values, formikBag) => {

@@ -62,9 +62,9 @@ const validationSchema = Yup.object()
       },
     ),
     lorawan_version: Yup.string().required(sharedMessages.validateRequired),
-    supports_join: Yup.boolean().when(
-      ['$jsEnabled', '_activation_mode'],
-      (jsEnabled, activationMode, schema) => {
+    supports_join: Yup.boolean()
+      .transform(() => undefined)
+      .when(['$jsEnabled', '_activation_mode'], (jsEnabled, activationMode, schema) => {
         if (!jsEnabled || activationMode === ACTIVATION_MODES.NONE) {
           return schema.strip()
         }
@@ -81,11 +81,10 @@ const validationSchema = Yup.object()
         }
 
         return schema
-      },
-    ),
-    multicast: Yup.boolean().when(
-      ['$nsEnabled', '_activation_mode'],
-      (nsEnabled, activationMode, schema) => {
+      }),
+    multicast: Yup.boolean()
+      .transform(() => undefined)
+      .when(['$nsEnabled', '_activation_mode'], (nsEnabled, activationMode, schema) => {
         if (!nsEnabled || activationMode === ACTIVATION_MODES.NONE) {
           return schema.strip()
         }
@@ -99,8 +98,7 @@ const validationSchema = Yup.object()
         }
 
         return schema
-      },
-    ),
+      }),
     _external_js: Yup.boolean(),
     _activation_mode: Yup.mixed().when(
       ['$nsEnabled', '$jsEnabled'],
