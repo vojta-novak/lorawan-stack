@@ -1,4 +1,4 @@
-// Copyright © 2019 The Things Network Foundation, The Things Industries B.V.
+// Copyright © 2020 The Things Network Foundation, The Things Industries B.V.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export default function(date) {
-  return `${date.getFullYear()}-${`0${date.getMonth() + 1}`.slice(-2)}-${`0${date.getDate()}`.slice(
-    -2,
-  )}`
+/**
+ * Function to return a valid input date string from a Date object.
+ *
+ * @param {object} d - Date() object.
+ * @returns {string} 'yyyy-mm-dd' or undefined.
+ */
+
+export default function(d) {
+  if (Object.prototype.toString.call(d) !== '[object Date]' || isNaN(d.getTime())) {
+    return undefined
+  }
+  const mm = d.getMonth() + 1
+  const dd = d.getDate()
+  const yy = d.getFullYear()
+  return `${yy}-${`0${mm}`.slice(-2)}-${`0${dd}`.slice(-2)}`
 }

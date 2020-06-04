@@ -75,8 +75,8 @@ const DeviceClaimAuthenticationCode = props => {
     if (claim_authentication_code) {
       const { value, valid_from, valid_to } = claim_authentication_code
 
-      const validFrom = valid_from ? toInputDate(new Date(valid_from)) : undefined
-      const validTo = valid_to ? toInputDate(new Date(valid_to)) : undefined
+      const validFrom = toInputDate(new Date(valid_from))
+      const validTo = toInputDate(new Date(valid_to))
 
       return {
         claim_authentication_code: {
