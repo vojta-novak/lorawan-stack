@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Draft template for documentation.
+- Redux state and actions reporting to Sentry
+- Sending sourcemaps to Sentry
 
 ### Changed
 
