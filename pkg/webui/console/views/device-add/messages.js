@@ -16,20 +16,16 @@ import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
   basicTitle: 'Basic settings',
-  basicDescription: 'General settings of the end device',
+  basicDescription: "General settings of the end device. End device ID's, Name and Description",
   basicDetails: 'Defines general settings of an end device',
   networkTitle: 'Network layer settings',
-  networkDescription: 'Network server settings',
-  networkDetails:
-    'Handles the LoRaWAN network layer, including MAC commands, regional parameters and adaptive data rate (ADR).',
+  networkDescription:
+    'Network server settings. Frequency plan, regional parameters, end device class and session keys.',
   appTitle: 'Application layer settings',
-  appDescription: 'Application server settings',
-  appDetails:
-    'Handles the LoRaWAN application layer, including uplink data decryption and decoding, downlink queuing and downlink data encoding and encryption.',
+  appDescription:
+    'Application server settings. Application session key to encrypt/decrypt LoRaWAN payload.',
   joinTitle: 'Join settings',
-  joinDescription: 'Join server settings',
-  joinDetails:
-    'Handles the LoRaWAN join flow, including Network and Application Server authentication and session key generation.',
+  joinDescription: 'Join server settings. Root keys, net ID and kek labels.',
 })
 
 export default messages
