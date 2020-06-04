@@ -15,18 +15,18 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
-  basicTitle: 'Basic Settings',
+  basicTitle: 'Basic settings',
   basicDescription: 'General settings of the end device',
   basicDetails: 'Defines general settings of an end device',
-  networkTitle: 'Network Layer Settings',
+  networkTitle: 'Network layer settings',
   networkDescription: 'Network server settings',
   networkDetails:
     'Handles the LoRaWAN network layer, including MAC commands, regional parameters and adaptive data rate (ADR).',
-  appTitle: 'Application Layer Settings',
+  appTitle: 'Application layer settings',
   appDescription: 'Application server settings',
   appDetails:
     'Handles the LoRaWAN application layer, including uplink data decryption and decoding, downlink queuing and downlink data encoding and encryption.',
-  joinTitle: 'Join Settings',
+  joinTitle: 'Join settings',
   joinDescription: 'Join server settings',
   joinDetails:
     'Handles the LoRaWAN join flow, including Network and Application Server authentication and session key generation.',
