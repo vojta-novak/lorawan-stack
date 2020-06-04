@@ -28,7 +28,7 @@ class Steps extends React.Component {
     initSteps(
       React.Children.toArray(children)
         .filter(child => child !== null && child.type.displayName === 'Wizard.Step')
-        .map((_, idx) => idx),
+        .map((step, index) => ({ stepNumber: index + 1, title: step.props.title })),
     )
   }
 

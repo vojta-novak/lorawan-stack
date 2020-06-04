@@ -22,6 +22,8 @@ import SubmitButton from '@ttn-lw/components/submit-button'
 import Button from '@ttn-lw/components/button'
 import { useWizardContext } from '@ttn-lw/components/wizard'
 
+import Message from '@ttn-lw/lib/components/message'
+
 import useCombinedRefs from '@ttn-lw/lib/hooks/use-combined-refs'
 import PropTypes from '@ttn-lw/lib/prop-types'
 
@@ -84,11 +86,18 @@ const WizardForm = React.forwardRef((props, ref) => {
     [isLastStep, nextStep, onComplete, onSubmit, snapshot, validationContext, validationSchema],
   )
 
+  const { title: prevMessage } = steps.find(({ stepNumber }) => stepNumber === currentStep - 1) || {
+    title: m.next,
+  }
+  const { title: nextStepTitle } = steps.find(
+    ({ stepNumber }) => stepNumber === currentStep + 1,
+  ) || { title: m.prev }
+
   const nextMessage = isLastStep
     ? Boolean(completeMessage)
       ? completeMessage
       : m.complete
-    : m.next
+    : nextStepTitle
 
   return (
     <Form
@@ -102,9 +111,15 @@ const WizardForm = React.forwardRef((props, ref) => {
       {children}
       <SubmitBar align={isFirstStep ? 'end' : 'between'}>
         {!isFirstStep && (
-          <Button message={m.prev} secondary onClick={handlePrevStep} type="button" />
+          <Button message={prevMessage} secondary onClick={handlePrevStep} type="button">
+            <Button.Icon icon="keyboard_arrow_left" type="left" />
+            <Message content={prevMessage} />
+          </Button>
         )}
-        <Form.Submit component={SubmitButton} message={nextMessage} />
+        <Form.Submit component={SubmitButton} message={nextMessage}>
+          <Message content={nextMessage} />
+          {!isLastStep && <Button.Icon icon="keyboard_arrow_right" type="right" />}
+        </Form.Submit>
       </SubmitBar>
     </Form>
   )
