@@ -30,7 +30,7 @@ import { generate16BytesKey } from '@console/lib/device-utils'
 import validationSchema from './validation-schema'
 
 const messages = defineMessages({
-  skipCryptoTitle: 'Skip payload crypto',
+  skipCryptoTitle: 'Skip payload encoding',
   skipCryptoDescription: 'Skip decryption of uplink payloads and encryption of downlink payloads',
   skipCryptoPlaceholder: 'Encryption/decryption disabled',
 })
