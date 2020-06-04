@@ -34,7 +34,7 @@ const m = defineMessages({
 const WizardForm = React.forwardRef((props, ref) => {
   const { validationSchema, validationContext, onSubmit, children, initialValues, error } = props
   const context = useWizardContext()
-  const { nextStep, prevStep, currentStep, steps, snapshot, onComplete } = context
+  const { nextStep, prevStep, currentStep, steps, snapshot, onComplete, completeMessage } = context
 
   const formRef = React.useRef(null)
   const combinedRef = useCombinedRefs(ref, formRef)
@@ -84,6 +84,12 @@ const WizardForm = React.forwardRef((props, ref) => {
     [isLastStep, nextStep, onComplete, onSubmit, snapshot, validationContext, validationSchema],
   )
 
+  const nextMessage = isLastStep
+    ? Boolean(completeMessage)
+      ? completeMessage
+      : m.complete
+    : m.next
+
   return (
     <Form
       onSubmit={handleSubmit}
@@ -98,7 +104,7 @@ const WizardForm = React.forwardRef((props, ref) => {
         {!isFirstStep && (
           <Button message={m.prev} secondary onClick={handlePrevStep} type="button" />
         )}
-        <Form.Submit component={SubmitButton} message={isLastStep ? m.complete : m.next} />
+        <Form.Submit component={SubmitButton} message={nextMessage} />
       </SubmitBar>
     </Form>
   )

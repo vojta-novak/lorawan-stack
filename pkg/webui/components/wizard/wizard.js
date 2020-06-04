@@ -48,7 +48,7 @@ const reducer = (state, action) => {
 }
 
 const Wizard = props => {
-  const { initialStep, onComplete, initialValues } = props
+  const { initialStep, onComplete, initialValues, completeMessage } = props
 
   const [state, dispatch] = React.useReducer(reducer, {
     currentStep: initialStep,
@@ -88,6 +88,7 @@ const Wizard = props => {
     prevStep,
     steps,
     dirty,
+    completeMessage,
   }
 
   return (
@@ -98,6 +99,7 @@ const Wizard = props => {
 }
 
 Wizard.propTypes = {
+  completeMessage: PropTypes.message,
   initialStep: PropTypes.number,
   initialValues: PropTypes.shape({}),
   onComplete: PropTypes.func.isRequired,
@@ -106,6 +108,7 @@ Wizard.propTypes = {
 Wizard.defaultProps = {
   initialValues: {},
   initialStep: 1,
+  completeMessage: undefined,
 }
 
 export default Wizard
