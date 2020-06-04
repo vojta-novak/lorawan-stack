@@ -211,6 +211,8 @@ TTN_LW_IS_EMAIL_NETWORK_IDENTITY_SERVER_URL="http://localhost:8080/oauth.js"
 TTN_LW_CONSOLE_UI_ASSETS_BASE_URL="http://localhost:8080/assets"
 ```
 
+> Note: Development configuration can be loaded from environment variables only. It cannot be sourced from a config file.
+
 #### Optional Configuration
 
 ##### Disable [Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/)
