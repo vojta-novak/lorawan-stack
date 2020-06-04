@@ -106,26 +106,32 @@ const ConfigurationForm = React.memo(props => {
     [validationContext],
   )
 
-  const formInitialValues = React.useMemo(
-    () =>
-      validationSchema.cast(
-        merge(
-          {
-            _external_js: !validationContext.jsEnabled,
-            _activation_mode: ACTIVATION_MODES.NONE,
-            application_server_address: undefined,
-            network_server_address: undefined,
-            join_server_address: undefined,
-            lorawan_version: '',
-          },
-          initialValues,
-        ),
+  const formInitialValues = React.useMemo(() => {
+    const { jsEnabled, nsEnabled } = validationContext
+
+    const initialActivationMode = jsEnabled
+      ? ACTIVATION_MODES.OTAA
+      : nsEnabled
+      ? ACTIVATION_MODES.ABP
+      : ACTIVATION_MODES.NONE
+
+    return validationSchema.cast(
+      merge(
         {
-          context: validationContext,
+          _external_js: !jsEnabled,
+          _activation_mode: initialActivationMode,
+          application_server_address: undefined,
+          network_server_address: undefined,
+          join_server_address: undefined,
+          lorawan_version: '',
         },
+        initialValues,
       ),
-    [initialValues, validationContext],
-  )
+      {
+        context: validationContext,
+      },
+    )
+  }, [initialValues, validationContext])
 
   const onFormSubmit = React.useCallback(
     (values, formikBag) => {
