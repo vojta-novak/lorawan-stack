@@ -23,7 +23,7 @@ import PropTypes from '@ttn-lw/lib/prop-types'
 
 import style from './step.styl'
 
-const Step = React.memo(props => {
+const Step = props => {
   const {
     className,
     title,
@@ -73,9 +73,7 @@ const Step = React.memo(props => {
       </div>
     </li>
   )
-})
-
-Step.displayName = 'Stepper.Step'
+}
 
 Step.defaultProps = {
   active: false,
@@ -97,5 +95,7 @@ Step.propTypes = {
   transitionFailed: PropTypes.bool,
   vertical: PropTypes.bool,
 }
+
+Step.displayName = 'Stepper.Step'
 
 export default Step
