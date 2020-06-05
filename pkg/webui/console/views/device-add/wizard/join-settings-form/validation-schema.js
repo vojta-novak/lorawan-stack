@@ -55,8 +55,7 @@ const validationSchema = Yup.object()
     net_id: Yup.nullableString().emptyOrLength(
       3 * 2,
       Yup.passValues(sharedMessages.validateLength),
-    ), // 3 Byte hex
-    // .default(''),
+    ), // 3 Byte hex.
     resets_join_nonces: Yup.boolean().when('$lorawanVersion', {
       // Verify if lorawan version is 1.1.0 or higher.
       is: version => parseLorawanMacVersion(version) >= 110,
