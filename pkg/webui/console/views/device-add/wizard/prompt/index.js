@@ -19,15 +19,15 @@ import Prompt from '@ttn-lw/components/prompt'
 
 import Message from '@ttn-lw/lib/components/message'
 
-import sharedMessages from '@ttn-lw/lib/shared-messages'
 import PropTypes from '@ttn-lw/lib/prop-types'
 import useBeforeUnload from '@ttn-lw/lib/hooks/use-before-unload'
 
 const m = defineMessages({
-  modalTitle: 'Abort end device creation',
+  modalTitle: 'Confirm navigation',
   modalMessage:
-    'Are you sure you want to abort creation of this end device? Unsaved changes in your forms will be lost.',
-  modalApproveText: 'Dismiss and proceed',
+    'Are you sure you want to leave this page and abort the end device creation? There are unsaved changes that will be lost.',
+  modalApproveText: 'Confirm navigation',
+  modalCancelText: 'Stay on this page',
 })
 
 const WizardPromptModal = React.memo(props => {
@@ -50,7 +50,7 @@ const WizardPromptModal = React.memo(props => {
     return {
       title: m.modalTitle,
       buttonMessage: m.modalApproveText,
-      cancelButtonMessage: sharedMessages.cancel,
+      cancelButtonMessage: m.modalCancelText,
     }
   }, [])
 
