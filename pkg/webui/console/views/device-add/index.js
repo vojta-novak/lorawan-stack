@@ -47,7 +47,7 @@ const FunctionalDeviceAdd = React.memo(props => {
     location,
     appId,
     redirectToWizard,
-    redirectToList,
+    redirectToEndDevice,
     redirectToConfiguration,
     redirectToNextLocation,
     jsConfig,
@@ -85,9 +85,9 @@ const FunctionalDeviceAdd = React.memo(props => {
     device => {
       const deviceId = getDeviceId(device)
 
-      redirectToList(appId, deviceId)
+      redirectToEndDevice(appId, deviceId)
     },
-    [appId, redirectToList],
+    [appId, redirectToEndDevice],
   )
 
   React.useEffect(() => {
@@ -146,7 +146,7 @@ FunctionalDeviceAdd.propTypes = {
   mayEditKeys: PropTypes.bool.isRequired,
   nsConfig: PropTypes.stackComponent.isRequired,
   redirectToConfiguration: PropTypes.func.isRequired,
-  redirectToList: PropTypes.func.isRequired,
+  redirectToEndDevice: PropTypes.func.isRequired,
   redirectToNextLocation: PropTypes.func.isRequired,
   redirectToWizard: PropTypes.func.isRequired,
 }
@@ -161,7 +161,7 @@ export default connect(
   }),
   (dispatch, { match }) => ({
     redirectToNextLocation: location => dispatch(replace(location)),
-    redirectToList: (appId, deviceId) =>
+    redirectToEndDevice: (appId, deviceId) =>
       dispatch(push(`/applications/${appId}/devices/${deviceId}`)),
     redirectToWizard: () => dispatch(push(`${match.url}/steps`)),
     redirectToConfiguration: () => dispatch(replace(match.url)),
