@@ -16,40 +16,33 @@ import React from 'react'
 
 import PropTypes from '@ttn-lw/lib/prop-types'
 
-import { WizardContext } from './context'
+import { useWizardContext } from '.'
 
-class Steps extends React.Component {
-  static contextType = WizardContext
+const Steps = props => {
+  const { children } = props
+  const { initSteps, currentStep } = useWizardContext()
 
-  componentDidMount() {
-    const { children } = this.props
-    const { initSteps } = this.context
-
+  const childrenRef = React.useRef(children)
+  React.useEffect(() => {
     initSteps(
-      React.Children.toArray(children)
-        .filter(child => child !== null && child.type.displayName === 'Wizard.Step')
+      React.Children.toArray(childrenRef.current)
+        .filter(child => React.isValidElement(child) && child.type.displayName === 'Wizard.Step')
         .map((step, index) => ({ stepNumber: index + 1, title: step.props.title })),
     )
-  }
+  }, [initSteps])
 
-  render() {
-    const { children } = this.props
-    const { currentStep } = this.context
+  return React.Children.toArray(children)
+    .filter(child => React.isValidElement(child) && child.type.displayName === 'Wizard.Step')
+    .reduce((acc, child, index) => {
+      if (index + 1 === currentStep) {
+        return child
+      }
 
-    return React.Children.toArray(children)
-      .filter(child => child !== null && child.type.displayName === 'Wizard.Step')
-      .reduce((acc, child, index) => {
-        if (index + 1 === currentStep) {
-          return child
-        }
-
-        return acc
-      }, null)
-  }
+      return acc
+    }, null)
 }
 
 Steps.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 }
-
 export default Steps
