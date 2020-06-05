@@ -30,7 +30,7 @@ const m = defineMessages({
   modalCancelText: 'Stay on this page',
 })
 
-const WizardPromptModal = React.memo(props => {
+const DeviceWizardPrompt = props => {
   const { when, onApprove, onCancel, shouldBlockNavigation } = props
 
   useBeforeUnload(event => {
@@ -65,17 +65,20 @@ const WizardPromptModal = React.memo(props => {
       <Message content={m.modalMessage} />
     </Prompt>
   )
-})
+}
 
-WizardPromptModal.propTypes = {
+DeviceWizardPrompt.propTypes = {
   onApprove: PropTypes.func,
   onCancel: PropTypes.func,
   shouldBlockNavigation: PropTypes.func.isRequired,
   when: PropTypes.bool.isRequired,
 }
 
-WizardPromptModal.defaultProps = {
+DeviceWizardPrompt.defaultProps = {
   onApprove: () => null,
   onCancel: () => null,
 }
-export default WizardPromptModal
+
+DeviceWizardPrompt.displayName = 'DeviceWizardPrompt'
+
+export default React.memo(DeviceWizardPrompt)
